@@ -21,12 +21,9 @@ def _cat_source() -> str:
 def _engine_echo(input_s, steps=5000):
     import subprocess, json
     src = _cat_source()
-    exe = os.environ.get(
-        "MALPAD_ENGINE_EXE",
-        r"C:\Development\ISyCo Git\Malbolge-Engine\malbolge-ipc.exe",
-    )
-    if not Path(exe).exists():
-        pytest.skip("malbolge-engine not present")
+    exe = os.environ.get("MALPAD_ENGINE_EXE")
+    if not exe or not Path(exe).exists():
+        pytest.skip("malbolge-engine not present (set MALPAD_ENGINE_EXE)")
     p = subprocess.Popen([exe], stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
     json.loads(p.stdout.readline())
     p.stdin.write(json.dumps({"id": 1, "op": "run", "program": src,
@@ -39,12 +36,9 @@ def _engine_echo(input_s, steps=5000):
 
 def _oracle_echo(input_s, steps=5000):
     import sys
-    d = os.environ.get(
-        "MALPAD_ORACLE_DIR",
-        r"C:\Development\ISyCo Git\malbolge-oracle",
-    )
-    if not Path(d).is_dir():
-        pytest.skip("malbolge-oracle not present")
+    d = os.environ.get("MALPAD_ORACLE_DIR")
+    if not d or not Path(d).is_dir():
+        pytest.skip("malbolge-oracle not present (set MALPAD_ORACLE_DIR)")
     if d not in sys.path:
         sys.path.insert(0, d)
     from oracle import Oracle

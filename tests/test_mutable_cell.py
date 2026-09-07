@@ -21,8 +21,9 @@ ID_MAL = ROOT / "evidence" / "mutable_cell" / "input_driven.mal"
 
 def _oracle(inp, prog=None):
     import sys as _s
-    d = os.environ.get("MALPAD_ORACLE_DIR",
-        r"C:\Development\ISyCo Git\malbolge-oracle")
+    d = os.environ.get("MALPAD_ORACLE_DIR")
+    if not d or not Path(d).is_dir():
+        pytest.skip("malbolge-oracle not present (set MALPAD_ORACLE_DIR)")
     if d not in _s.path:
         _s.path.insert(0, d)
     from oracle import Oracle
@@ -34,10 +35,9 @@ def _oracle(inp, prog=None):
 
 def _engine(inp, prog=None):
     import subprocess, json
-    exe = os.environ.get("MALPAD_ENGINE_EXE",
-        r"C:\Development\ISyCo Git\Malbolge-Engine\malbolge-ipc.exe")
-    if not Path(exe).exists():
-        pytest.skip("malbolge-engine not present")
+    exe = os.environ.get("MALPAD_ENGINE_EXE")
+    if not exe or not Path(exe).exists():
+        pytest.skip("malbolge-engine not present (set MALPAD_ENGINE_EXE)")
     p = subprocess.Popen([exe], stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
     json.loads(p.stdout.readline())
     p.stdin.write(json.dumps({"id": 1, "op": "run",

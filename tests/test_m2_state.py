@@ -25,8 +25,9 @@ def _tm_source() -> str:
 
 def _oracle(inp, steps=2000):
     import sys
-    d = os.environ.get("MALPAD_ORACLE_DIR",
-        r"C:\Development\ISyCo Git\malbolge-oracle")
+    d = os.environ.get("MALPAD_ORACLE_DIR")
+    if not d or not Path(d).is_dir():
+        pytest.skip("malbolge-oracle not present (set MALPAD_ORACLE_DIR)")
     if d not in sys.path:
         sys.path.insert(0, d)
     from oracle import Oracle
@@ -38,10 +39,9 @@ def _oracle(inp, steps=2000):
 
 def _engine(inp, steps=2000):
     import subprocess, json
-    exe = os.environ.get("MALPAD_ENGINE_EXE",
-        r"C:\Development\ISyCo Git\Malbolge-Engine\malbolge-ipc.exe")
-    if not Path(exe).exists():
-        pytest.skip("malbolge-engine not present")
+    exe = os.environ.get("MALPAD_ENGINE_EXE")
+    if not exe or not Path(exe).exists():
+        pytest.skip("malbolge-engine not present (set MALPAD_ENGINE_EXE)")
     p = subprocess.Popen([exe], stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
     json.loads(p.stdout.readline())
     p.stdin.write(json.dumps({"id": 1, "op": "run", "program": _tm_source(),
