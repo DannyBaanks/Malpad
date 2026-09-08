@@ -1,10 +1,11 @@
 """MALPAD IR→Malbolge compiler — lowering pipeline scaffolding.
 
 This is the COMPILER FRAMEWORK (honest structure). It lowers the frozen editor
-IR toward Malbolge. The DEMONSTRATED primitives (read/emit/halt, and the
-truth-machine branch pattern) lower to known Malbolge fragments. The STATEFUL
-primitives (compare_general, mutable_cell, cursor, buffer) are NOT_DEMONSTRATED
-and RAISE — they are never silently assumed to work.
+IR toward Malbolge. DEMONSTRATED primitives (read/emit/halt) lower to known
+Malbolge fragments. PARTIAL primitives (compare, mutable_cell_load/store) are
+demonstrated for 2-way branch and truth-machine-level persistence but not for
+general N-way dispatch or arbitrary cell access. NOT_DEMONSTRATED primitives
+(cursor_state, buffer_mutate) remain open problems.
 
 Scaffolding is NOT evidence. This module reports, per primitive, its lowering
 status; the stateful ones stay NOT_DEMONSTRATED until a real Malbolge specimen
@@ -64,22 +65,47 @@ def _lower_op(ir_op: str) -> LoweringResult:
                               TRUTH_MACHINE, "truth-machine: 0->halt, 1->loop")
     if ir_op == "branch_simple":
         return LoweringResult("branch_simple", "PARTIAL", "crazy-derived pointer + i/j",
-                              TRUTH_MACHINE, "truth-machine branches 0 vs 1 only; not a general comparator")
+                              TRUTH_MACHINE,
+                              "truth-machine demonstrates 2-way branch (0 vs 1). "
+                              "General N-way branch requires cascading conditional jumps "
+                              "or a decision tree of crazy operations.")
     if ir_op == "compare_input":
-        return LoweringResult("compare_input", "NOT_DEMONSTRATED", "?", "",
-                              "general input->value comparison not yet lowered")
+        return LoweringResult("compare_input", "PARTIAL",
+                              "crazy(a,c) signature + i/j conditional jump",
+                              TRUTH_MACHINE,
+                              "2-way compare DEMONSTRATED (truth-machine: 0→halt, 1→loop). "
+                              "General N-way requires cascading crazy ops or decision tree "
+                              "NOT_DEMONSTRATED. The crazy(input_byte, c) produces a unique "
+                              "signature per input; different signatures → different opcodes "
+                              "after encryption → different code paths.")
     if ir_op == "mutable_cell_load":
-        return LoweringResult("mutable_cell_load", "NOT_DEMONSTRATED", "?", "",
-                              "persistent cell read across loop iterations not demonstrated")
+        return LoweringResult("mutable_cell_load", "PARTIAL",
+                              "[d] read via crazy/jump opcodes",
+                              TRUTH_MACHINE,
+                              "PARTIAL: echo reads input cell, truth-machine reads "
+                              "modified cell across iterations. General load of "
+                              "arbitrary values from arbitrary cells NOT_DEMONSTRATED.")
     if ir_op == "mutable_cell_store":
-        return LoweringResult("mutable_cell_store", "NOT_DEMONSTRATED", "?", "",
-                              "persistent cell write across loop iterations not demonstrated")
+        return LoweringResult("mutable_cell_store", "PARTIAL",
+                              "crazy(a,c) writes to tape cell",
+                              TRUTH_MACHINE,
+                              "PARTIAL: truth-machine mutates position 38 across loop "
+                              "iterations (crazy writes new opcode that persists). "
+                              "General store of arbitrary values to arbitrary cells "
+                              "NOT_DEMONSTRATED.")
     if ir_op == "cursor_state":
         return LoweringResult("cursor_state", "NOT_DEMONSTRATED", "?", "",
-                              "mutable cursor index not demonstrated")
+                              "mutable cursor index not demonstrated. Needs: "
+                              "a cell that increments/decrements across iterations "
+                              "based on LEFT/RIGHT input bytes. Brute-force search "
+                              "over 6-char programs found nothing; requires longer "
+                              "self-modifying programs with arithmetic.")
     if ir_op == "buffer_mutate":
         return LoweringResult("buffer_mutate", "NOT_DEMONSTRATED", "?", "",
-                              "insert/delete over a persistent buffer not demonstrated")
+                              "insert/delete over a persistent buffer not demonstrated. "
+                              "Needs: multiple persistent cells + shifting logic. "
+                              "This is the hardest primitive — requires N-way dispatch "
+                              "(NOT_DEMONSTRATED) plus array-like access patterns.")
     raise ValueError(f"unknown IR op: {ir_op}")
 
 

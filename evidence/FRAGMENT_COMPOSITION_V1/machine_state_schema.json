@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MachineState V1",
+  "description": "Canonical, immutable representation of Malbolge VM state",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "a": {
+      "type": "integer",
+      "description": "Accumulator register (0..65535)"
+    },
+    "c": {
+      "type": "integer",
+      "description": "Code pointer register (0..59048)"
+    },
+    "d": {
+      "type": "integer",
+      "description": "Data pointer register (0..59048)"
+    },
+    "tape": {
+      "type": "array",
+      "items": {
+        "type": "integer"
+      },
+      "description": "Memory cells (0..59048 each, max 59049 cells)"
+    },
+    "halted": {
+      "type": "boolean",
+      "description": "Whether the machine has halted"
+    },
+    "executed_steps": {
+      "type": "integer",
+      "description": "Number of steps executed"
+    },
+    "input_consumed": {
+      "type": "integer",
+      "description": "Bytes consumed from input buffer"
+    },
+    "output_produced": {
+      "type": "string",
+      "description": "Output produced (hex-encoded)"
+    },
+    "program_length": {
+      "type": "integer",
+      "description": "Length of the program that produced this state"
+    },
+    "fragment_id": {
+      "type": "string",
+      "description": "Identifier for the fragment that produced this state"
+    }
+  },
+  "required": ["schema_version", "a", "c", "d", "tape", "halted", "executed_steps", "input_consumed", "output_produced"]
+}

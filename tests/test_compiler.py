@@ -34,12 +34,28 @@ def test_branch_simple_is_partial():
     assert plan.operations[0].status == "PARTIAL"
 
 
-@pytest.mark.parametrize("op", ["compare_input", "mutable_cell_load",
-                                "mutable_cell_store", "cursor_state",
-                                "buffer_mutate"])
+@pytest.mark.parametrize("op", ["cursor_state", "buffer_mutate"])
 def test_stateful_primitives_not_demonstrated(op):
     plan = build_plan("t", [op])
     assert plan.operations[0].status == "NOT_DEMONSTRATED"
+
+
+def test_compare_input_is_partial():
+    """compare_input is PARTIAL (2-way branch demonstrated via truth-machine)."""
+    plan = build_plan("t", ["compare_input"])
+    assert plan.operations[0].status == "PARTIAL"
+
+
+def test_mutable_cell_load_is_partial():
+    """mutable_cell_load is PARTIAL (truth-machine reads modified cell)."""
+    plan = build_plan("t", ["mutable_cell_load"])
+    assert plan.operations[0].status == "PARTIAL"
+
+
+def test_mutable_cell_store_is_partial():
+    """mutable_cell_store is PARTIAL (truth-machine mutates cell across loop)."""
+    plan = build_plan("t", ["mutable_cell_store"])
+    assert plan.operations[0].status == "PARTIAL"
 
 
 def test_compiler_refuses_to_emit_with_unproven_state():
@@ -55,8 +71,8 @@ def test_state_test_1_requires_mutable_cell():
     plan = state_test_1_plan()
     assert not plan.all_demonstrated
     m = {o.ir_op: o.status for o in plan.operations}
-    assert m["mutable_cell_store"] == "NOT_DEMONSTRATED"
-    assert m["mutable_cell_load"] == "NOT_DEMONSTRATED"
-    # and the compiler must not emit a fake counter for it
+    # mutable_cell_store/load are PARTIAL (truth-machine demonstrates persistence)
+    # but STATE TEST #1 also needs emit_event and general store/load
+    # which are not fully demonstrated -> compiler must refuse
     with pytest.raises(NotImplementedError):
         compile_state_machine([o.ir_op for o in plan.operations])

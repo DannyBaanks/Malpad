@@ -35,7 +35,7 @@ def test_bridge_backend_independence():
         pytest.skip("frame emitter not generated")
     ro = run_bridge(str(FRAME_MAL), backend="oracle")
     from malpad_bridge import ENGINE_EXE
-    if not Path(ENGINE_EXE).exists():
+    if not ENGINE_EXE or not Path(ENGINE_EXE).exists():
         pytest.skip("malbolge-engine not present")
     re_ = run_bridge(str(FRAME_MAL), backend="malbolge-engine")
     assert ro.frames == re_.frames

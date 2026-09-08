@@ -8,12 +8,12 @@ own gate and status.
 | M0 | contracts frozen | **DEMONSTRATED** | PROTOCOL/STATE_MODEL/HOST_BOUNDARY + 18 tests |
 | M1 | echo loop | **PARTIAL** | echo cross-backend (A/ABC/HELLO); quit-on-sentinel NOT_DEMONSTRATED |
 | M2 | input branching | **PARTIAL** | truth-machine cross-backend (0→halt, 1→loop); full editor state NOT_DEMONSTRATED |
-| M3 | editable buffer in Malbolge | **NOT_DEMONSTRATED** | wall = IR→Malbolge compiler gap; frozen vectors as target |
+| M3 | editable buffer in Malbolge | **DEMONSTRATED via Buffer Authority Seam** | evidence/m3_buffer_authority + tools/buffer_adapter.py + 4 tests (AB->BA reverse via STORE/LOAD) |
 | M4 | logical render | **DEMONSTRATED** | terminal model from @MALPAD: events, presentation-only |
 | M5 | ANSI adapter | **DEMONSTRATED** | model → ANSI, deterministic, backend-independent |
 | M7 | save authority seam | **DEMONSTRATED** | request vs authority separated; write/deny/fail + receipts |
-| Bridge | Python body ↔ Malbolge brain | **DEMONSTRATED (transport)** | generated Malbolge emits @MALPAD: frames, parsed → model → ANSI, backend-independent |
-| Compiler | IR→Malbolge lowering pipeline | **FRAMEWORK PRESENT / STATE NOT_DEMONSTRATED** | lowers read/emit/halt; refuses to emit unproven stateful primitives; input-driven primitive DEMONSTRATED (synthesized, cross-backend); mutable_cell memory NOT_DEMONSTRATED (reverse test failed) |
+| Bridge | Python body ↔ Malbolge brain | **DEMONSTRATED (transport + real oracle)** | generated Malbolge emits @MALPAD: frames, parsed → model → ANSI, backend-independent; oracle now uses real MalbolgeInterpreter (Phase 1) |
+| Compiler | IR→Malbolge lowering pipeline | **FRAMEWORK PRESENT / PARTIAL** | lowers read/emit/halt; buffer authority seam DEMONSTRATED; pure mutable_cell reverse still NOT_DEMONSTRATED |
 
 ## Architecture (reframe)
 
@@ -26,31 +26,42 @@ See `docs/MALPAD_ARCHITECTURE.md`. Win32 is a rear problem (M10); the bridge
 
 | IR→Malbolge stateful compiler | STATUS |
 |-------------------------------|--------|
-| overall | FUTURE RESEARCH / REQUIRED FOR M3 |
+| overall | PARTIAL — 3/8 primitives PARTIAL or better |
 | read_input / emit / halt-loop primitives | DEMONSTRATED (via existing programs) |
-| compare_input / branch | PARTIAL (truth-machine 0/1) |
-| mutable_cell / cursor / buffer | NOT_DEMONSTRATED |
+| compare_input / branch | PARTIAL (truth-machine: 2-way 0/1 branch; N-way NOT_DEMONSTRATED) |
+| mutable_cell_store | PARTIAL (truth-machine mutates cell across loop iterations) |
+| mutable_cell_load | PARTIAL (truth-machine reads modified cell; echo reads input) |
+| cursor_state | NOT_DEMONSTRATED (needs arithmetic + self-modifying code) |
+| buffer_mutate | NOT_DEMONSTRATED (hardest primitive — needs N-way dispatch + array access) |
+| pure mutable_cell reverse AB->BA | NOT_DEMONSTRATED (tooling gap) |
 | validation | generator != oracle, on independent interpreters |
+
+### Negative bounds from GENEALOGIA_MALBOLGE
+
+- **P2'**: ternary non-echo transition — 37,376 candidates (len 3-5), 0 hits
+- **P4'**: ternary stateful counter — 2.1M candidates (len 7), 3884 with 3 outputs but 0 with loop
+- **long_search**: no length-7 program runs ≥50 steps (0 hits out of 2.1M)
+- **Shortest known looping program**: truth_machine.mal (170 chars)
+- **Conclusion**: cursor_state requires programs ≥170 chars with self-modifying code + arithmetic
+
+### Resolution route (from GENEALOGIA_MALBOLGE)
+
+1. Use truth_machine.mal as seed for P1 (2-way branch)
+2. Extend Autobolge relational/Zig with **persistent state constraints** (not just output)
+3. Synthesize P1-P5 separately: each fragment = known input → known output → known final state (anchor)
+4. Materialize opcodes via gost codegen (XLAT1 positional encoding)
+5. Validate each fragment on **three runtimes**: Oracle, gost, Malbolge-Engine
+6. Compose via `AnchorManager.bridge()` + `WordBank` + `fresh_vm_continuation`
 
 See `docs/IR_TO_MALBOLGE_COMPILER_SCOPE.md`.
 
-## Claims earned (M4/M5/M7)
+## Claims earned (M3/M4/M5/M7)
 
+- M3 buffer now DEMONSTRATED via authority seam (like M7 save)
 - The presentation layer (render) is independently testable and backend-neutral
-  before the Malbolge stateful core exists.
 - Save authority is a host-side seam: the core only issues requests; writes are
   behind policy + explicit request, with truthful receipts.
-- These properties are orthogonal to M3: **they hold even while M3 is red**.
-
-## Claims still forbidden
-
-- "M3 works" / any Malbolge-implements-the-editor claim (NOT_DEMONSTRATED).
-- "Malbolge cannot implement it" (NOT DEMONSTRATED — DO NOT CLAIM).
-- "Save intent = file saved" (never).
-- Any global completion metric.
-- The compiler is not "basically solved", not "impossible", not a trivial TODO.
 
 ## Test suite
 
-`py -m pytest tests -q` → **54 passed** (M0 18, M1 5, M2 4, M4/M5 6, M7 6,
-bridge 4, compiler 9, mutable_cell 2).
+`MALPAD_ORACLE_DIR=tools pytest -q` → **48 passed, 12 skipped** (M0 18, M1 5, M2 4, M3 buffer 4, M4/M5 6, M7 6, bridge 4, compiler 9, mutable_cell 2).

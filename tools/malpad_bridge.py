@@ -44,12 +44,6 @@ def run_backend(program: str, backend: str, input_bytes: bytes,
                 max_steps: int = 5_000_000) -> str:
     """Run a Malbolge program, feed input, return its stdout output string."""
     if backend == "oracle":
-        if not ORACLE_DIR:
-            raise RuntimeError(
-                "malbolge-oracle not configured: set MALPAD_ORACLE_DIR to the "
-                "malbolge-oracle repository directory")
-        if ORACLE_DIR not in sys.path:
-            sys.path.insert(0, ORACLE_DIR)
         from oracle import Oracle
         o = Oracle()
         o.load_ascii(program)
