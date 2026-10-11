@@ -83,7 +83,8 @@ ejecutado coincida con este IR, verificado en interpretes independientes.
 ## Pruebas
 
 ```bash
-python3 -m pytest tests -q     # 121 pasadas, 19 skipped (Linux, 2026-10-11)
+python3 -m pytest tests -q     # 123–124 pasadas, 19–20 skipped (Linux, 2026-10-11;
+                               # test_bridge_v1 añade 0–1 skip flaky por split-point aleatorio)
 ```
 
 **Limite medido**: la busqueda `op*` (depth<=5) jamas sintetizo un token byte
@@ -107,6 +108,7 @@ Requiere ademas el paquete `malbolge` del toolkit (`MALBOLGE_TOOLKIT_DIR`).
 | test_m45_render.py | 6 | Render + ANSI (M4/M5) |
 | test_m7_save.py | 6 | Save authority seam (M7) |
 | test_mutable_cell.py | 2 | Mutable cell cross-backend |
+| test_mutable_cell_reverse.py | 3 | AB→BA puro: espécimen LIFO A05b (sha256 fijado), 5 vectores en oracle_classic + C reference |
 | test_fragment_epoch_transparency.py | 17 | Fragment composition transparency |
 | test_cross_vm.py | 3 | Cross-VM state survival |
 | test_negative_controls.py | 7 | Negative controls |

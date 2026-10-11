@@ -26,14 +26,14 @@ See `docs/MALPAD_ARCHITECTURE.md`. Win32 is a rear problem (M10); the bridge
 
 | IR→Malbolge stateful compiler | STATUS |
 |-------------------------------|--------|
-| overall | PARTIAL — 3/8 primitives PARTIAL or better |
+| overall | PARTIAL — 5/8 primitives DEMONSTRATED (read, emit, halt-loop, mutable_cell_store, mutable_cell_load); branch PARTIAL; cursor_state y buffer_mutate NOT_DEMONSTRATED |
 | read_input / emit / halt-loop primitives | DEMONSTRATED (via existing programs) |
 | compare_input / branch | PARTIAL (truth-machine: 2-way 0/1 branch; N-way NOT_DEMONSTRATED) |
-| mutable_cell_store | PARTIAL (truth-machine mutates cell across loop iterations) |
-| mutable_cell_load | PARTIAL (truth-machine reads modified cell; echo reads input) |
+| mutable_cell_store | **DEMONSTRATED** (A05b LIFO slot cells; truth-machine also mutates across iterations) |
+| mutable_cell_load | **DEMONSTRATED** (A05b pops stored bytes later; order-reversed readback) |
 | cursor_state | NOT_DEMONSTRATED (needs arithmetic + self-modifying code) |
 | buffer_mutate | NOT_DEMONSTRATED (hardest primitive — needs N-way dispatch + array access) |
-| pure mutable_cell reverse AB->BA | NOT_DEMONSTRATED (tooling gap) |
+| pure mutable_cell reverse AB->BA | **DEMONSTRATED** (2026-10-11, por linaje A05b LIFO: evidence/mutable_cell_reverse, 7/7 byte-exact C+oracle; specimen sha256 f237df82) |
 | validation | generator != oracle, on independent interpreters |
 
 ### Negative bounds from GENEALOGIA_MALBOLGE

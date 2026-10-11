@@ -1,0 +1,126 @@
+{
+ "summary": {
+  "gate": "pure mutable_cell reverse AB->BA (MALPAD compiler row)",
+  "claim": "A pure Classic-Malbolge program stores two input payload bytes in mutable tape cells and re-emits them in reversed (LIFO) order; 0141 0142 10 10 00 -> 4241.",
+  "status": "DEMONSTRATED",
+  "specimen_file": "mbir_a05_lifo.mb",
+  "specimen_sha256": "f237df8247f5c8dc10157b96f58ba1dc9eff06ecefe916651b1d3aba5a66ed6c",
+  "lineage": {
+   "source_repo": "MALBOLGE-MB-DATABASE/vm_malbolge (A05b 2-slot LIFO stack machine)",
+   "source_hell": "vm_malbolge/src/mbir_a05_lifo.hell",
+   "source_hell_sha256": "36ec275b8747bcd4fd5467d6c8afeadcb5e168e3ac8cb399a1b5cb4ba299f6ad",
+   "upstream_receipt": "vm_malbolge/evidence/mbir_a05_lifo_smoke.json (7/7, Python+C+Zig, 2026-10-07)",
+   "note": "the .mb shipped in MB-DATABASE (f237df82) differs byte-wise from the upstream canonical artifact (7571212d) because LMAO is not byte-reproducible; THIS MALPAD re-verification witnesses f237df82 independently on 2 interpreters, 7/7."
+  },
+  "generated_at_utc": "2026-10-11T10:02:16Z",
+  "passed": 7,
+  "vectors": 7
+ },
+ "receipts": [
+  {
+   "vector": "push_A_out",
+   "input_hex": "01411000",
+   "expected_hex": "41",
+   "oracle_classic": {
+    "output_hex": "41",
+    "steps": 59752,
+    "status": "HALTED"
+   },
+   "malbolge_c": {
+    "output_hex": "41",
+    "steps": 59752
+   },
+   "pass": true
+  },
+  {
+   "vector": "push_B_out",
+   "input_hex": "01421000",
+   "expected_hex": "42",
+   "oracle_classic": {
+    "output_hex": "42",
+    "steps": 59752,
+    "status": "HALTED"
+   },
+   "malbolge_c": {
+    "output_hex": "42",
+    "steps": 59752
+   },
+   "pass": true
+  },
+  {
+   "vector": "halt",
+   "input_hex": "00",
+   "expected_hex": "",
+   "oracle_classic": {
+    "output_hex": "",
+    "steps": 53700,
+    "status": "HALTED"
+   },
+   "malbolge_c": {
+    "output_hex": "",
+    "steps": 53700
+   },
+   "pass": true
+  },
+  {
+   "vector": "push_A_noout",
+   "input_hex": "014100",
+   "expected_hex": "",
+   "oracle_classic": {
+    "output_hex": "",
+    "steps": 57369,
+    "status": "HALTED"
+   },
+   "malbolge_c": {
+    "output_hex": "",
+    "steps": 57369
+   },
+   "pass": true
+  },
+  {
+   "vector": "seq_AB",
+   "input_hex": "01411001421000",
+   "expected_hex": "4142",
+   "oracle_classic": {
+    "output_hex": "4142",
+    "steps": 65804,
+    "status": "HALTED"
+   },
+   "malbolge_c": {
+    "output_hex": "4142",
+    "steps": 65804
+   },
+   "pass": true
+  },
+  {
+   "vector": "LIFO_BA",
+   "input_hex": "01410142101000",
+   "expected_hex": "4241",
+   "oracle_classic": {
+    "output_hex": "4241",
+    "steps": 65804,
+    "status": "HALTED"
+   },
+   "malbolge_c": {
+    "output_hex": "4241",
+    "steps": 65804
+   },
+   "pass": true
+  },
+  {
+   "vector": "LIFO_top_B",
+   "input_hex": "014101421000",
+   "expected_hex": "42",
+   "oracle_classic": {
+    "output_hex": "42",
+    "steps": 63421,
+    "status": "HALTED"
+   },
+   "malbolge_c": {
+    "output_hex": "42",
+    "steps": 63421
+   },
+   "pass": true
+  }
+ ]
+}
