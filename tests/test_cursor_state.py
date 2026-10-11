@@ -15,11 +15,16 @@ explicitly tracked.
 """
 from __future__ import annotations
 
+import subprocess
+from pathlib import Path
+
 import pytest
 
 from malbolge import MalbolgeInterpreter, ProgramGenerator
 
 from tools.machine_state import MachineState
+
+ROOT = Path(__file__).resolve().parent.parent
 
 
 class TestCursorStateComposition:
@@ -97,7 +102,8 @@ class TestCursorStateComposition:
 
         code = f"""
 import sys
-sys.path.insert(0, r"C:\\Development\\ISyCo Git\\MALPAD")
+sys.path.insert(0, {str(ROOT)!r})
+import tools.malpad_bootstrap; tools.malpad_bootstrap.apply()
 from tools.machine_state import MachineState
 
 state_bytes = {state_bytes!r}

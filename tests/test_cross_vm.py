@@ -21,6 +21,8 @@ from malbolge import MalbolgeInterpreter, ProgramGenerator
 
 from tools.machine_state import MachineState
 
+ROOT = Path(__file__).resolve().parent.parent
+
 
 def _run_in_subprocess(code: str, input_data: bytes = b"") -> tuple[int, str, str]:
     """Run Python code in a subprocess and return (exit_code, stdout, stderr)."""
@@ -57,7 +59,8 @@ class TestCrossVM:
         tape_sample = list(state.tape[:10])
         code = f"""
 import sys
-sys.path.insert(0, r"C:\\Development\\ISyCo Git\\MALPAD")
+sys.path.insert(0, {str(ROOT)!r})
+import tools.malpad_bootstrap; tools.malpad_bootstrap.apply()
 from tools.machine_state import MachineState
 
 # Deserialize
@@ -121,7 +124,8 @@ print("PASS: State verified in subprocess")
         # Verify composition in subprocess
         code = f"""
 import sys
-sys.path.insert(0, r"C:\\Development\\ISyCo Git\\MALPAD")
+sys.path.insert(0, {str(ROOT)!r})
+import tools.malpad_bootstrap; tools.malpad_bootstrap.apply()
 from malbolge import MalbolgeInterpreter
 from tools.machine_state import MachineState
 
@@ -171,7 +175,8 @@ else:
             # Verify in subprocess
             code = f"""
 import sys
-sys.path.insert(0, r"C:\\Development\\ISyCo Git\\MALPAD")
+sys.path.insert(0, {str(ROOT)!r})
+import tools.malpad_bootstrap; tools.malpad_bootstrap.apply()
 from tools.machine_state import MachineState
 
 state = MachineState.from_bytes(open(r"{state_file}", "rb").read())
