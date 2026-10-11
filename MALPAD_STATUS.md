@@ -28,11 +28,11 @@ See `docs/MALPAD_ARCHITECTURE.md`. Win32 is a rear problem (M10); the bridge
 |-------------------------------|--------|
 | overall | PARTIAL — 5/8 primitives DEMONSTRATED (read, emit, halt-loop, mutable_cell_store, mutable_cell_load); branch PARTIAL; cursor_state y buffer_mutate NOT_DEMONSTRATED |
 | read_input / emit / halt-loop primitives | DEMONSTRATED (via existing programs) |
-| compare_input / branch | PARTIAL (truth-machine: 2-way 0/1 branch; N-way NOT_DEMONSTRATED) |
+| compare_input / branch | **DEMONSTRATED** (N-way byte-VALUE dispatch por linaje: byte_dispatch18 21/21 MB-DATABASE; fusion MALPAD m1_quit_sentinel 6-way + sentinel, 5/5 dos interpretos) |
 | mutable_cell_store | **DEMONSTRATED** (A05b LIFO slot cells; truth-machine also mutates across iterations) |
 | mutable_cell_load | **DEMONSTRATED** (A05b pops stored bytes later; order-reversed readback) |
-| cursor_state | NOT_DEMONSTRATED (needs arithmetic + self-modifying code) |
-| buffer_mutate | NOT_DEMONSTRATED (hardest primitive — needs N-way dispatch + array access) |
+| cursor_state | NOT_DEMONSTRATED — cotas nuevas 2026-10-11: censo exhaustivo straight-delta desde snapshot truth-machine `op*`<=13: 0/2,391,483 y `op*</i`<=9: 0/12,093,234 (evidence/cursor_state_search). Baja por VM MBIR bloqueada por defecto upstream "result never lands in Slot 0" (ADD→ADD/SUB→SUB dan basura; probe canonica incluida). |
+| buffer_mutate | NOT_DEMONSTRATED (hardest primitive — N-way dispatch YA demostrado por linaje; falta stack depth >2 / shifting, cota explicita upstream en A05_STATUS) |
 | pure mutable_cell reverse AB->BA | **DEMONSTRATED** (2026-10-11, por linaje A05b LIFO: evidence/mutable_cell_reverse, 7/7 byte-exact C+oracle; specimen sha256 f237df82) |
 | validation | generator != oracle, on independent interpreters |
 

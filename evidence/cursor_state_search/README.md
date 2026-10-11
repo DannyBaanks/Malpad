@@ -10,7 +10,9 @@ increments/decrements across iterations in response to LEFT (0x11) / RIGHT
 |---|---|
 | `smoke_*.json` | harness validation, `op*` ≤4 from truth-machine seed |
 | `linear_op_max9_*.json` | census `op*` ≤9 from seed(steps=34): **0 / 29,523** |
+| `linear_op_max13_*.json` | deep census `op*` ≤13 from same seed: **0 / 2,391,483 — exhaustive** (206 s) |
 | `extended_seeded100_*.json` | census `op*</i` ≤6 from seed(steps=100): **0 / 55,986** |
+| `extended_opi_max9_*.json` | deep census `op*</i` ≤9 from seed(steps=100): **0 / 12,093,234 — exhaustive** (348 s) |
 | `linear_op_max13_*.json`, `extended_opi_max9_*.json` | deep censuses (see below) |
 | `mbir_alu_cursor_probe.json` | MBIR-lowering probe: NEGATIVE, with vectors |
 
