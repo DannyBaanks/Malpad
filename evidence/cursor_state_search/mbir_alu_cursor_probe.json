@@ -1,0 +1,75 @@
+{
+ "schema": "malpad-cursor-mbir-probe/1",
+ "generated_at_utc": "2026-10-11T10:25:44Z",
+ "specimen": "mbir_alu.mb",
+ "specimen_sha256": "8869f7a1aac17dc998ae4d75da9a9390306b3aac29e153efb32fac434394ec82",
+ "interpreter": "oracle_classic.py",
+ "claim_tested": "cursor_state lowering: repeated ADD/SUB events on a persistent cell via MBIR ALU",
+ "verdict": "NEGATIVE \u2014 same-opcode chains and post-OUT arithmetic produce garbage; upstream receipt (mbir_alu_smoke.json) never covered them; consistent with the open MB-DATABASE defect 'result never lands in Slot 0' (LT_STATUS, commits d2ec624/0308c81, 2026-10-11).",
+ "cases": [
+  {
+   "case": "single ADD 2+3",
+   "input_hex": "01020103021000",
+   "expected_hex": "05",
+   "actual_hex": "05",
+   "pass": true,
+   "in_upstream_receipt": true
+  },
+  {
+   "case": "single PUSH1 ADD from 1 (cursor 1 R)",
+   "input_hex": "01010101021000",
+   "expected_hex": "02",
+   "actual_hex": "02",
+   "pass": true,
+   "in_upstream_receipt": true
+  },
+  {
+   "case": "chained ADD then SUB (1+1-1)",
+   "input_hex": "01010101020101031000",
+   "expected_hex": "01",
+   "actual_hex": "01",
+   "pass": true,
+   "in_upstream_receipt": true
+  },
+  {
+   "case": "chained SUB then ADD (2-1+1)",
+   "input_hex": "01020101030101021000",
+   "expected_hex": "02",
+   "actual_hex": "02",
+   "pass": true,
+   "in_upstream_receipt": true
+  },
+  {
+   "case": "cursor 2 RR (ADD after ADD)",
+   "input_hex": "01020101020101021000",
+   "expected_hex": "04",
+   "actual_hex": "c6",
+   "pass": false,
+   "in_upstream_receipt": false
+  },
+  {
+   "case": "cursor 3 LL (SUB after SUB)",
+   "input_hex": "01030101030101031000",
+   "expected_hex": "01",
+   "actual_hex": "e3",
+   "pass": false,
+   "in_upstream_receipt": false
+  },
+  {
+   "case": "cursor 2 R render,3 (ADD OUT then ADD OUT)",
+   "input_hex": "0102010102100101021000",
+   "expected_hex": "0304",
+   "actual_hex": "0254",
+   "pass": false,
+   "in_upstream_receipt": false
+  },
+  {
+   "case": "cursor 5 LR (operand out of range)",
+   "input_hex": "01050101030101021000",
+   "expected_hex": "05",
+   "actual_hex": "02",
+   "pass": false,
+   "in_upstream_receipt": false
+  }
+ ]
+}

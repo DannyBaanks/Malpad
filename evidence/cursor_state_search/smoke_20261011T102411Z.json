@@ -1,0 +1,31 @@
+{
+ "schema": "malpad-cursor-state-census/1",
+ "tag": "smoke",
+ "generated_at_utc": "2026-10-11T10:24:11Z",
+ "alphabet": [
+  "o",
+  "p",
+  "*"
+ ],
+ "max_depth_requested": 4,
+ "seed_steps": 34,
+ "seed": {
+  "a": 29563,
+  "c": 154,
+  "d": 43,
+  "tape_len": 254,
+  "machine_hash": "0x580091f51510e14a"
+ },
+ "acceptance": "single cell delta +/-1 (mod 3^10), linear c/d, no output",
+ "candidates_evaluated": 120,
+ "per_depth": {
+  "1": 3,
+  "2": 9,
+  "3": 27,
+  "4": 81
+ },
+ "exhaustive": true,
+ "elapsed_seconds": 0.0,
+ "cursor_hits": [],
+ "note": "negative census = canonical bound per MALPAD rules; truth-machine mutation cell (38) context: https://internal GENEALOGIA_MALBOLGE P2'/P4'"
+}

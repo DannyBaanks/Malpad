@@ -1,0 +1,36 @@
+{
+ "schema": "malpad-cursor-state-census/1",
+ "tag": "extended_seeded100",
+ "generated_at_utc": "2026-10-11T10:24:42Z",
+ "alphabet": [
+  "o",
+  "p",
+  "*",
+  "<",
+  "/",
+  "i"
+ ],
+ "max_depth_requested": 6,
+ "seed_steps": 100,
+ "seed": {
+  "a": 29497,
+  "c": 220,
+  "d": 97,
+  "tape_len": 254,
+  "machine_hash": "0x21b8ac32e450bf39"
+ },
+ "acceptance": "single cell delta +/-1 (mod 3^10), linear c/d, no output",
+ "candidates_evaluated": 55986,
+ "per_depth": {
+  "1": 6,
+  "2": 36,
+  "3": 216,
+  "4": 1296,
+  "5": 7776,
+  "6": 46656
+ },
+ "exhaustive": true,
+ "elapsed_seconds": 1.6,
+ "cursor_hits": [],
+ "note": "negative census = canonical bound per MALPAD rules; truth-machine mutation cell (38) context: https://internal GENEALOGIA_MALBOLGE P2'/P4'"
+}
