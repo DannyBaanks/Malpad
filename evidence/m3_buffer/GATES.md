@@ -63,3 +63,26 @@ into a Malbolge specimen. Constraints:
 `EDITABLE_BUFFER_DEMONSTRATED` = **NOT_DEMONSTRATED**. M3 is gated on the
 IR→Malbolge compiler. No claim is made that the editor logic runs in Malbolge
 yet; the frozen IR + vectors stand as the specification and validation target.
+## Correction (append, 2026-10-11)
+
+Raw history above preserved. Updates to the requirement table, per component,
+from this session's cross-checks (generator ≠ oracle; all on C reference +
+`tools/oracle_classic.py`):
+
+| Requirement | 2026-08-30 status | 2026-10-11 status |
+|---|---|---|
+| input-branching decision | DEMONSTRATED (M2 truth-machine) | unchanged |
+| persistent mutable state (buffer/cursor) driven by input | NOT_DEMONSTRATED | **partial**: 2-slot persistence DEMONSTRATED via A05b LIFO (`evidence/mutable_cell_reverse`, 7/7); cursor_state and depth>2 still NOT_DEMONSTRATED (see below) |
+| multi-way (~6) input dispatch | NOT_DEMONSTRATED | **DEMONSTRATED by lineage**: `byte_dispatch18` 21/21 (MB-DATABASE) + MALPAD fusion `m1_quit_sentinel` 6-way + sentinel, 5/5 two interpreters |
+| Malbolge program reproducing `tests/editor_state_vectors.json` | NOT_DEMONSTRATED | **still NOT_DEMONSTRATED** — the full vectors need cursor_state + shifting, both open |
+
+The hardest remaining component is `buffer_mutate` (insert/delete with
+data-dependent shifting). Its precise dependency chain and the new exhaustive
+bounds are recorded in `evidence/buffer_mutate/GATES.md` (2026-10-11).
+
+**Verdict update**: `EDITABLE_BUFFER_DEMONSTRATED` (a single Malbolge program
+reproducing the frozen vectors end-to-end) = **still NOT_DEMONSTRATED**. What
+changed is that two of its constituent primitives (N-way dispatch, 2-slot
+persistent store/load incl. AB→BA reverse) moved from open to DEMONSTRATED,
+narrowing the gap to cursor_state + depth>2 + shifting. No upgrade of the
+overall M3 verdict is claimed without a real specimen.
