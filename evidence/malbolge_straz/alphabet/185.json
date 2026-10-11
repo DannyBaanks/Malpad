@@ -1,0 +1,8 @@
+{
+ "byte": 185,
+ "byte_hex": "b9",
+ "metachar": "D",
+ "byte_exact": false,
+ "error": "TIMEOUT after 45.0s (synthesis not bounded; no proof of impossibility, just budget)",
+ "timeout_s": 45.0
+}

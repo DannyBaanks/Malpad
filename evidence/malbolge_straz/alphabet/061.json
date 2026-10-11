@@ -1,0 +1,12 @@
+{
+ "byte": 61,
+ "byte_hex": "3d",
+ "metachar": "J",
+ "program_ops": 125,
+ "meta_delta": "oooooooooooopooop<",
+ "token_delta": "oopop<",
+ "output_hex": "4a3d",
+ "byte_exact": true,
+ "steps": 27,
+ "seconds": 0.04
+}

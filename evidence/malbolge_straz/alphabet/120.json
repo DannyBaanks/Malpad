@@ -1,0 +1,12 @@
+{
+ "byte": 120,
+ "byte_hex": "78",
+ "metachar": "Q",
+ "program_ops": 201,
+ "meta_delta": "oooooooooooo*ppop<",
+ "token_delta": "oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo*op<",
+ "output_hex": "5178",
+ "byte_exact": true,
+ "steps": 103,
+ "seconds": 0.18
+}

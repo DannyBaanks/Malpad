@@ -83,8 +83,15 @@ ejecutado coincida con este IR, verificado en interpretes independientes.
 ## Pruebas
 
 ```bash
-py -m pytest tests -q          # 110 pruebas, 17 skipped
+python3 -m pytest tests -q     # 118 pasadas, 19 skipped (Linux, 2026-10-10)
 ```
+
+**Limite medido**: la busqueda `op*` (depth<=5) jamas sintetizo un token byte
+`>=0xA0` desde estado frio (banco de evidencia topa en 0x9F; STRAZ registro
+TIMEOUT en `a5`; probes 2026-10-10). Las gates UTF-8 de
+`test_malpad_primitives.py` se saltan con razon `NOT_DEMONSTRATED`;
+opt-in con `MALPAD_RUN_UTF8_GATES=1` (horas de compute, sin garantia).
+Requiere ademas el paquete `malbolge` del toolkit (`MALBOLGE_TOOLKIT_DIR`).
 
 ### Suite de pruebas
 
@@ -95,6 +102,7 @@ py -m pytest tests -q          # 110 pruebas, 17 skipped
 | test_m1_echo.py | 5 | Echo loop (M1) |
 | test_m2_state.py | 4 | State/branching (M2) |
 | test_m3_buffer.py | 4 | Buffer authority seam (M3) |
+| test_malpad_primitives.py | 10 | Composicion por tokens con banco persistente (3 gates UTF-8 opt-in) |
 | test_m45_render.py | 6 | Render + ANSI (M4/M5) |
 | test_m7_save.py | 6 | Save authority seam (M7) |
 | test_mutable_cell.py | 2 | Mutable cell cross-backend |
