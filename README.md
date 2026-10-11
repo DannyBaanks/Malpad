@@ -83,7 +83,7 @@ ejecutado coincida con este IR, verificado en interpretes independientes.
 ## Pruebas
 
 ```bash
-python3 -m pytest tests -q     # 118 pasadas, 19 skipped (Linux, 2026-10-10)
+python3 -m pytest tests -q     # 121 pasadas, 19 skipped (Linux, 2026-10-11)
 ```
 
 **Limite medido**: la busqueda `op*` (depth<=5) jamas sintetizo un token byte
@@ -100,6 +100,7 @@ Requiere ademas el paquete `malbolge` del toolkit (`MALBOLGE_TOOLKIT_DIR`).
 | test_compiler.py | 9 | Compilador IR→Malbolge (status honesto) |
 | test_bridge.py | 4 | Bridge Python↔Malbolge |
 | test_m1_echo.py | 5 | Echo loop (M1) |
+| test_m1_sentinel.py | 3 | M1 quit-on-sentinel: ejemplar Classic con sha256 fijado, 5 vectores byte-exact en C reference + oracle_classic |
 | test_m2_state.py | 4 | State/branching (M2) |
 | test_m3_buffer.py | 4 | Buffer authority seam (M3) |
 | test_malpad_primitives.py | 10 | Composicion por tokens con banco persistente (3 gates UTF-8 opt-in) |

@@ -1,0 +1,111 @@
+{
+ "summary": {
+  "gate": "M1 quit-on-sentinel",
+  "spec": "read byte B, emit B verbatim, loop; B==0x04 -> HALT (sentinel not emitted); EOF -> HALT",
+  "program_file": "build/m1_quit_sentinel.mb",
+  "program_sha256": "6dcf393cbde1c6f034aaf0fc95804e66dfeb9b41bdbd4a5e98604585f4b983fd",
+  "source_file": "src/m1_quit_sentinel.hell",
+  "source_sha256": "938c5aa730a4756612b3c2f2805ef498be2f731a807588db5e8c8dd1db757860",
+  "assembler": "LMAO v0.6.0 (MALBOLGE-MB-DATABASE/third_party/lmao) \u2014 output is NOT byte-reproducible across runs (rand() NOP padding)",
+  "generated_at_utc": "2026-10-11T09:32:20Z",
+  "interpreters": [
+   "runners/malbolge-original/malbolge (C reference)",
+   "tools/oracle_classic.py (independent Python, Classic 3^10)"
+  ],
+  "toolkit_note": "monorepo MalbolgeInterpreter CANNOT witness this specimen: it halts at program_end and never wraps d as a 3^10 ring; LMAO programs rely on ring wrap.",
+  "vectors": 5,
+  "passed": 5
+ },
+ "receipts": [
+  {
+   "vector": "sentinel_only",
+   "input_hex": "04",
+   "expected_hex": "",
+   "oracle_classic": {
+    "output_hex": "",
+    "steps": 46977,
+    "status": "HALTED",
+    "byte_exact": true
+   },
+   "malbolge_c": {
+    "output_hex": "",
+    "steps": 46977,
+    "trailing_newline_stripped": true,
+    "byte_exact": true
+   },
+   "pass": true
+  },
+  {
+   "vector": "two_bytes_then_quit",
+   "input_hex": "414204",
+   "expected_hex": "4142",
+   "oracle_classic": {
+    "output_hex": "4142",
+    "steps": 55521,
+    "status": "HALTED",
+    "byte_exact": true
+   },
+   "malbolge_c": {
+    "output_hex": "4142",
+    "steps": 55521,
+    "trailing_newline_stripped": true,
+    "byte_exact": true
+   },
+   "pass": true
+  },
+  {
+   "vector": "quit_mid_input",
+   "input_hex": "4d414c5041440472657374",
+   "expected_hex": "4d414c504144",
+   "oracle_classic": {
+    "output_hex": "4d414c504144",
+    "steps": 73219,
+    "status": "HALTED",
+    "byte_exact": true
+   },
+   "malbolge_c": {
+    "output_hex": "4d414c504144",
+    "steps": 73219,
+    "trailing_newline_stripped": true,
+    "byte_exact": true
+   },
+   "pass": true
+  },
+  {
+   "vector": "eof_without_sentinel",
+   "input_hex": "414243",
+   "expected_hex": "414243",
+   "oracle_classic": {
+    "output_hex": "414243",
+    "steps": 56098,
+    "status": "HALTED",
+    "byte_exact": true
+   },
+   "malbolge_c": {
+    "output_hex": "414243",
+    "steps": 54599,
+    "trailing_newline_stripped": true,
+    "byte_exact": true
+   },
+   "pass": true
+  },
+  {
+   "vector": "long_mixed",
+   "input_hex": "4d414c50414420656469746f72206d310a736567756e6461206c696e6561046465736361727461",
+   "expected_hex": "4d414c50414420656469746f72206d310a736567756e6461206c696e6561",
+   "oracle_classic": {
+    "output_hex": "4d414c50414420656469746f72206d310a736567756e6461206c696e6561",
+    "steps": 174779,
+    "status": "HALTED",
+    "byte_exact": true
+   },
+   "malbolge_c": {
+    "output_hex": "4d414c50414420656469746f72206d310a736567756e6461206c696e6561",
+    "steps": 174779,
+    "trailing_newline_stripped": true,
+    "byte_exact": true
+   },
+   "pass": true
+  }
+ ]
+}

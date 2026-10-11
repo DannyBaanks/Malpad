@@ -50,3 +50,10 @@ and is deliberately not overclaimed here.
 
 M2 — state and logical cursor (the sentinel/state-branching Malbolge work),
 gated by `STATE_MACHINE_DEMONSTRATED`.
+## Correction (append, 2026-10-11)
+
+The `quit on sentinel: NOT_DEMONSTRATED` row above is superseded:
+`evidence/m1_quit_sentinel/` (GATES.md + receipts) demonstrates a
+sentinel-branching echo (0x04 → HALT, sentinel not emitted; EOF → HALT),
+byte-exact on 2 independent Classic interpreters across 5 vectors.
+Specimen sha256 `6dcf393c…`. This file is kept unmodified as raw history.

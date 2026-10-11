@@ -6,7 +6,7 @@ own gate and status.
 | Milestone | Gate | Status | Evidence |
 |-----------|------|--------|----------|
 | M0 | contracts frozen | **DEMONSTRATED** | PROTOCOL/STATE_MODEL/HOST_BOUNDARY + 18 tests |
-| M1 | echo loop | **PARTIAL** | echo cross-backend (A/ABC/HELLO); quit-on-sentinel NOT_DEMONSTRATED |
+| M1 | echo loop | **DEMONSTRATED** | echo cross-backend (A/ABC/HELLO); quit-on-sentinel DEMONSTRATED 2026-10-11: evidence/m1_quit_sentinel (0x04→HALT, EOF→HALT, 5/5 vectors byte-exact on C reference + oracle_classic) |
 | M2 | input branching | **PARTIAL** | truth-machine cross-backend (0→halt, 1→loop); full editor state NOT_DEMONSTRATED |
 | M3 | editable buffer in Malbolge | **DEMONSTRATED via Buffer Authority Seam** | evidence/m3_buffer_authority + tools/buffer_adapter.py + 4 tests (AB->BA reverse via STORE/LOAD) |
 | M4 | logical render | **DEMONSTRATED** | terminal model from @MALPAD: events, presentation-only |
