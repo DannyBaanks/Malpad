@@ -15,14 +15,14 @@ materializa capacidades del host explicitamente solicitadas.
 | Milestone | Gate | Status | Evidence |
 |-----------|------|--------|----------|
 | M0 | contracts frozen | **DEMONSTRATED** | PROTOCOL/STATE_MODEL/HOST_BOUNDARY + 18 tests |
-| M1 | echo loop | **PARTIAL** | echo cross-backend (A/ABC/HELLO); quit-on-sentinel NOT_DEMONSTRATED |
-| M2 | input branching | **PARTIAL** | truth-machine cross-backend (0→halt, 1→loop); full editor state NOT_DEMONSTRATED |
-| M3 | editable buffer | **DEMONSTRATED via Buffer Authority Seam** | evidence/m3_buffer_authority + tools/buffer_adapter.py |
+| M1 | echo loop | **DEMONSTRATED** | echo cross-backend (A/ABC/HELLO); quit-on-sentinel DEMONSTRATED 2026-10-11: `evidence/m1_quit_sentinel`, 5/5 vectores byte-exact en C reference + oracle_classic |
+| M2 | input branching | **PARTIAL** | truth-machine cross-backend (0→halt, 1→loop); full editor state NOT_DEMONSTRATED (sin cursor_state no se promueve) |
+| M3 | editable buffer | **PARTIAL** | seam de transporte: evidence/m3_buffer_authority + tools/buffer_adapter.py. End-to-end en Malbolge NOT_DEMONSTRATED; narrowed: dispatch N-way + store/load 2-slot + reverse AB→BA DEMOSTRADOS (2026-10-11); open: cursor_state, depth>2, shifting |
 | M4 | logical render | **DEMONSTRATED** | terminal model from @MALPAD: events, presentation-only |
 | M5 | ANSI adapter | **DEMONSTRATED** | model → ANSI, deterministic, backend-independent |
 | M7 | save authority seam | **DEMOSTRADO** | request vs authority separated; write/deny/fail + receipts |
 | Bridge | Python body ↔ Malbolge brain | **DEMONSTRATED** | generated Malbolge emits @MALPAD: frames, parsed → model → ANSI |
-| Compiler | IR→Malbolge lowering | **PARTIAL** | 3/8 primitives PARTIAL or better |
+| Compiler | IR→Malbolge lowering | **PARTIAL** | 5/8 primitivas DEMONSTRATED (read, emit, halt-loop, mutable_cell_store, mutable_cell_load); cursor_state y buffer_mutate NOT_DEMONSTRATED con cotas |
 
 Dashboard completo: `MALPAD_STATUS.md`.
 
@@ -46,19 +46,26 @@ Sistema completo para componer programas Malbolge via fragmentos:
 | read_input | DEMONSTRATED | A (Composable) |
 | emit_event | DEMONSTRATED | A (Composable) |
 | halt_loop | DEMONSTRATED | A (Composable) |
-| branch_simple | PARTIAL | B (New bridge) |
-| compare_input | PARTIAL | B (New bridge) |
-| mutable_cell_load | PARTIAL | B (New bridge) |
-| mutable_cell_store | PARTIAL | B (New bridge) |
-| cursor_state | NOT_DEMONSTRATED | C (New fragment) |
-| buffer_mutate | NOT_DEMONSTRATED | D (Not demonstrated) |
+| branch_simple | **DEMONSTRATED** | B (truth-machine + N-way dispatch) |
+| compare_input | **DEMONSTRATED** | B (byte_dispatch18 21/21 + m1_quit_sentinel 6-way 5/5) |
+| mutable_cell_load | **DEMONSTRATED** | B (A05b LIFO pop; AB→BA reverse 7/7) |
+| mutable_cell_store | **DEMONSTRATED** | B (A05b LIFO slot cells) |
+| cursor_state | NOT_DEMONSTRATED | C (cotas exhaustivas 2026-10-11, ver Limites Negativos) |
+| buffer_mutate | NOT_DEMONSTRATED | D (cadena de dependencias en `evidence/buffer_mutate/GATES.md`) |
 
 ### Limites Negativos
 
+**Preexistentes (GENEALOGIA_MALBOLGE):**
 - **P2'**: 37,376 candidatos (len 3-5), 0 hits → dispatch imposible en programas cortos
 - **P4'**: 2.1M candidatos (len 7), 3884 con 3 outputs pero 0 con loop
 - **long_search**: 0 programas len 7 corriendo ≥50 steps
 - **Conclusion**: cursor_state requiere programas ≥170 chars con self-modifying code + arithmetic
+
+**Nuevas cotas 2026-10-11 (`evidence/cursor_state_search`):**
+- **Censo straight-delta** desde snapshot truth-machine, alfabeto `op*` ≤13: **0/2,391,483** candidatos (EXHAUSTIVE, 206 s)
+- **Censo extendido** `op*/i` ≤9: **0/12,093,234** candidatos (EXHAUSTIVE, 348 s)
+- **Sonda MBIR** (ruta por VM ALU): NEGATIVA — ADD→ADD/SUB→SUB y post-OUT producen basura ("result never lands in Slot 0", defecto upstream abierto en MB-DATABASE); probe canonica `mbir_alu_cursor_probe.json`
+- **Busqueda de corpus buffer_mutate** (GENEALOGIA/MB-DATABASE/MALBOLGE/MalbolgeFree): negativa — ningun espécimen shift/depth>2
 
 ## Contrato del nucleo (congelado)
 
@@ -131,12 +138,22 @@ evidence/
 │   ├── README.md               # Summary
 │   ├── RESULTS.md              # Detailed results
 │   └── machine_state_schema.json
+├── m0/                         # M0 contracts evidence
 ├── m1_echo/                    # M1 echo loop evidence
+├── m1_quit_sentinel/           # M1 quit-on-sentinel specimen (5/5, sha256 fijado)
 ├── m2_state/                   # M2 state/branching evidence
-├── m3_buffer_authority/        # M3 buffer authority seam
+├── m3_buffer/                  # M3 gate GATES.md (+ Correction 2026-10-11)
+├── m3_buffer_authority/        # M3 buffer authority seam (transporte host)
 ├── m45_render/                 # M4/M5 render evidence
 ├── m7_save/                    # M7 save authority evidence
-└── malbolge_straz/             # Malbolge specimens
+├── mutable_cell/               # mutable cell cross-backend
+├── mutable_cell_reverse/       # AB→BA puro (A05b LIFO, 7/7, sha256 fijado)
+├── cursor_state_search/        # censos exhaustivos + sonda MBIR (negativos)
+├── buffer_mutate/              # cadena de dependencias gate (2026-10-11)
+├── compiler/                   # compiler scaffolding evidence
+├── malbolge_straz/             # Malbolge specimens (STRAZ)
+├── malpad_primitives/          # token composition bank
+└── m_bridge/                   # bridge oracle evidence
 ```
 
 ## Restricciones duras (de ROADMAP_MALPAD.md)
