@@ -18,6 +18,25 @@ from malbolge import (
 )
 
 
+class _OutputCapturingInterpreter(MalbolgeInterpreter):
+    """Records emitted chars so a step-limit raise doesn't lose partial output.
+
+    ``<`` is the only emitting opcode and the loop samples ``machine.a`` for
+    it via ``_instruction_at`` before dispatch — hooking there captures
+    exactly what the aborted run would have printed.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.captured: list[str] = []
+
+    def _instruction_at(self, index: int) -> str:
+        instruction = super()._instruction_at(index)
+        if instruction == "<":
+            self.captured.append(chr(self.machine.a % 256))
+        return instruction
+
+
 @dataclass
 class OracleResult:
     """Result from oracle execution. Compatible with existing test assertions."""
@@ -60,6 +79,7 @@ class Oracle:
         Returns OracleResult with output, steps, halted, halt_reason.
         Handles step limit exceeded (loop) and runtime errors gracefully.
         """
+        interp = _OutputCapturingInterpreter()
         try:
             opcodes = normalize(self._prog)
             if len(opcodes) == 0:
@@ -71,7 +91,6 @@ class Oracle:
                     status="ERROR",
                 )
 
-            interp = MalbolgeInterpreter()
             result = interp.execute(
                 opcodes,
                 input_buffer=iter(self._inp),
@@ -88,9 +107,10 @@ class Oracle:
         except StepLimitExceededError:
             # Program looped beyond step limit — this is expected for
             # truth-machine input '1' and similar looping programs.
-            # The old stub returned halted=False, halt_reason="timeout".
+            # The interpreter aborts without returning its output buffer;
+            # report what actually ran before the limit.
             return OracleResult(
-                output="",  # Partial output not available from exception
+                output="".join(interp.captured),
                 steps=max_steps,
                 halted=False,
                 halt_reason="timeout",
